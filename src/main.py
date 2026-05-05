@@ -6,7 +6,14 @@ from indexer import Indexer
 from search import SearchEngine
 
 
-INDEX_FILE = "data/index.json"
+# Path to the project root (one level above src/)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Path to the data folder at project root
+DATA_DIR = os.path.join(PROJECT_ROOT, "data")
+
+# Full path to index file
+INDEX_FILE = os.path.join(DATA_DIR, "index.json")
 
 
 def command_build():
@@ -18,8 +25,10 @@ def command_build():
     indexer = Indexer()
     inverted_index = indexer.build_index(page_text)
 
+    # Ensure data folder exists at project root
+    os.makedirs(DATA_DIR, exist_ok=True)
+
     print(f"[BUILD] Saving index to {INDEX_FILE}...")
-    os.makedirs("data", exist_ok=True)
     indexer.save(INDEX_FILE)
 
     print("[BUILD] Done.")

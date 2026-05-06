@@ -34,7 +34,7 @@ def test_crawler_collects_pages(mock_sleep, mock_get):
     pages = crawler.crawl()
 
     assert len(pages) == 2
-    assert "Good friends" in pages["https://quotes.toscrape.com/"]
+    assert "Good friends" in pages["https://quotes.toscrape.com"]
     assert "Life is short" in pages["https://quotes.toscrape.com/page/2/"]
 
 def test_extract_text():

@@ -20,26 +20,34 @@ def command_build():
     print("[BUILD] Starting crawler...")
     crawler = Crawler()
     page_text = crawler.crawl()
+    
+    if page_text == {}:
+        print("[BUILD] Error: No pages were crawled. Ensure the website is accessible (i.e., check your internet connection) Aborting index build.")
+    else:
+        print("[BUILD] Building inverted index...")
+        indexer = Indexer()
+        
+        indexer.build_index(page_text)
 
-    print("[BUILD] Building inverted index...")
-    indexer = Indexer()
-    inverted_index = indexer.build_index(page_text)
+        # Ensure data folder exists at project root
+        os.makedirs(DATA_DIR, exist_ok=True)
 
-    # Ensure data folder exists at project root
-    os.makedirs(DATA_DIR, exist_ok=True)
+        print(f"[BUILD] Saving index to {INDEX_FILE}...")
+        indexer.save(INDEX_FILE)
 
-    print(f"[BUILD] Saving index to {INDEX_FILE}...")
-    indexer.save(INDEX_FILE)
-
-    print("[BUILD] Done.")
+        print("[BUILD] Done.")
 
 
 def command_load():
     print(f"[LOAD] Loading index from {INDEX_FILE}...")
-    indexer = Indexer()
-    inverted_index = indexer.load(INDEX_FILE)
-    print("[LOAD] Index loaded.")
-    return inverted_index
+    try:
+        indexer = Indexer()
+        inverted_index = indexer.load(INDEX_FILE)
+        print("[LOAD] Index loaded.")
+        return inverted_index
+    except FileNotFoundError:
+        print(f"[ERROR] Index file not found at {INDEX_FILE}. Please run 'build' first.")
+        return None
 
 
 def command_print(engine, word):

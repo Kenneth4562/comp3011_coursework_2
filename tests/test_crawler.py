@@ -40,3 +40,30 @@ def test_crawler_collects_pages(mock_sleep, mock_get):
 def test_extract_text():
     crawler = Crawler()
     soup = crawler._extract_text
+
+def fake_response(text):
+    mock = MagicMock()
+    mock.text = text
+    mock.raise_for_status.return_value = None
+    return mock
+
+@patch("crawler.time.sleep", return_value=None)
+def test_crawler_handles_missing_quote_tags(mock_sleep):
+    html = "<html><body><p>No quotes here</p></body></html>"
+    with patch("crawler.requests.get", return_value=fake_response(html)):
+        crawler = Crawler()
+        pages = crawler.crawl()
+        assert list(pages.values())[0] == ""  # empty text extracted
+
+@patch("crawler.time.sleep", return_value=None)
+def test_crawler_stops_when_no_next_page(mock_sleep):
+    html = """
+    <html><body>
+        <span class="text">“Hello world”</span>
+        <!-- No next button -->
+    </body></html>
+    """
+    with patch("crawler.requests.get", return_value=fake_response(html)):
+        crawler = Crawler()
+        pages = crawler.crawl()
+        assert len(pages) == 1

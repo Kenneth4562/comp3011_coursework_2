@@ -1,3 +1,5 @@
+from random import sample
+
 from search import SearchEngine
 
 sample_index = {
@@ -7,6 +9,13 @@ sample_index = {
     },
     "friends": {
         "url1": {"freq": 1, "positions": [1]},
+    },
+    "hello": {
+        "u1": {"freq": 1, "positions": [0]}
+    },
+    "world": {
+        "u1": {"freq": 1, "positions": [1]},
+        "u2": {"freq": 2, "positions": [0, 3]}
     }
 }
 
@@ -38,3 +47,19 @@ def test_find_no_results():
 def test_find_empty_query():
     engine = SearchEngine(sample_index)
     assert engine.find("") == []
+
+def test_find_ignores_extra_spaces():
+    engine = SearchEngine(sample_index)
+    assert engine.find("   hello   world   ") == ["u1"]
+
+def test_find_case_insensitive():
+    engine = SearchEngine(sample_index)
+    assert engine.find("HeLLo WoRLd") == ["u1"]
+
+def test_find_duplicate_words():
+    engine = SearchEngine(sample_index)
+    assert engine.find("world world") == ["u1", "u2"]
+
+def test_find_word_not_in_index():
+    engine = SearchEngine(sample_index)
+    assert engine.find("banana") == []

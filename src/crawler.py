@@ -13,8 +13,8 @@ class Crawler:
     POLITENESS_SECONDS = 6
 
     def __init__(self):
-        self.to_visit = deque([self.BASE_URL])
-        self.visited = set()
+        self.to_visit = deque([self.BASE_URL]) # Double Ended Queue
+        self.visited = set() # Set of visited URLs
         self.page_text = {}  # url -> extracted text
 
     def crawl(self):

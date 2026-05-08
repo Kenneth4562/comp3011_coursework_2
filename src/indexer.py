@@ -11,7 +11,7 @@ class Indexer:
     WORD_PATTERN = re.compile(r"[a-zA-Z]+")
 
     def __init__(self):
-        # inverted_index[word][url] = {"freq": int, "positions": [int, ...]}
+        # inverted_index[word][url] = {"freq": int, "positions": [int, ...]} - dictionary
         self.inverted_index = defaultdict(lambda: defaultdict(lambda: {"freq": 0, "positions": []}))
 
     def build_index(self, page_text):
